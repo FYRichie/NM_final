@@ -6,7 +6,7 @@ import time
 from camera import Camera
 from esp_connecter import ESPConnecter, TOPIC_TYPE
 from logger import Logger
-from wsclient import WSClient, MessageParser
+from wsclient import WSClient
 from timer import Timer
 
 
