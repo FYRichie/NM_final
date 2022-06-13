@@ -6,7 +6,7 @@ from paho.mqtt import client as mqtt
 from logger import Logger
 
 # defines topic types
-TOPIC_TYPE = ["wake", "", ""]
+TOPIC_TYPE = ["wake"]
 
 
 class ESPSubscriber:

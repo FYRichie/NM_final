@@ -10,12 +10,7 @@ from typing import Any
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
 
 from logger import Logger
-from ..cmd import CMD
-
-
-class MessageParser:
-    def __call__(self, task: str, success: bool, payload: Any) -> dict:
-        return json.dumps({"task": task, "success": success, "payload": "" if payload is None else payload})
+from ..task import TASK
 
 
 class WSClient:
@@ -37,7 +32,7 @@ class WSClient:
         """
         task = msg["task"]
         payload = msg["payload"]
-        return task in CMD.keys()
+        return task in TASK
 
     def __on_open(self, ws):
         self.logger.success(f"Connected to {self.url}")
@@ -74,10 +69,10 @@ class WSClient:
         client_thread = Thread(target=self.__start)
         client_thread.start()
 
-    def send(self, msg: dict):
+    def send(self, task: str, success: bool, payload: Any):
         """
         Send message to server
 
         msg: message to send
         """
-        self.ws.send(msg)
+        self.ws.send(json.dumps({"task": task, "success": success, "payload": payload}))

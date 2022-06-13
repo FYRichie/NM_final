@@ -1,7 +1,6 @@
 from asyncio.log import logger
 from queue import Queue
 from threading import Thread
-from typing import Tuple
 import cv2
 import time
 import numpy as np

@@ -30,7 +30,6 @@ if __name__ == "__main__":
     args = vars(parser.parse_args())
 
     logger = Logger()
-    message_parser = MessageParser()
     camera_queue = Queue(maxsize=1)
     ws_queue = Queue()
     esp_queue = Queue()
@@ -64,27 +63,32 @@ if __name__ == "__main__":
 
     while True:
         if not camera_queue.empty():
-            # TODO
             """
             If time matches and still sleeping, call up
             """
-            esp_connecter.send(TOPIC_TYPE[0], True)
+            _, _, _, hour, min = time.strftime("%Y %m %d %H %M").split()
+            time_stamp = f"{hour}:{min}".zfill(5)
+            if time_stamp in timer.get_all() and camera_queue.get() == Camera.SLEEPING:
+                esp_connecter.send(TOPIC_TYPE[0], True)
 
         if not ws_queue.empty():
             msg = ws_queue.get()
             task, payload = msg["task"], msg["payload"]
+            success = True
+            payload = ""
 
-            response = message_parser(task, True)
             if task == Timer.ADD_TIME:
-                response["success"] = timer.add_time(payload)
+                success = timer.add_time(payload)
             elif task == Timer.CHANGE_TIME:
-                response["success"] = timer.change_time(payload["source_time"], payload["target_time"])
+                success = timer.change_time(payload["source_time"], payload["target_time"])
             elif task == Timer.DELETE_TIME:
-                response["success"] = timer.delete_time(payload)
+                success = timer.delete_time(payload)
+            elif task == Timer.CHANGE_ACTIVATE:
+                success = timer.change_activate(payload)
             elif task == Timer.GET_TIME_LIST:
-                response["payload"] = timer.get_all()
+                payload = timer.get_all()
 
-            ws_client.send(message_parser(task=task, success=True, payload=timer.get_all()))
+            ws_client.send(task=task, success=success, payload=payload)
 
         if not esp_queue.empty():
             logger.info(f"Response from ESP: {esp_queue.get()}")
