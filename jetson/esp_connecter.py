@@ -83,6 +83,7 @@ class ESPConnecter:
         self.jetson_publihser = JetsonPublisher(jetson_ip, jetson_port, logger)
         self.esp_subscriber = ESPSubscriber(esp_ip, esp_port, msg_queue, logger)
         self.queue = msg_queue
+        self.logger = logger
 
     def send(self, topic: str, payload: Any = "") -> None:
         """
@@ -97,5 +98,6 @@ class ESPConnecter:
         """
         Listen ESP message
         """
-        connecter_thread = Thread(target=self.esp_subscriber.listen, args=(self.queue))
+        connecter_thread = Thread(target=self.esp_subscriber.listen)
         connecter_thread.start()
+        self.logger.success("ESP started")

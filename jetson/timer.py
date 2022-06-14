@@ -49,8 +49,8 @@ class Timer:
             return False
 
         self.timelist.append({"time": time, "activate": True})
-        self.timelist = sorted(self.timelist, key=lambda x: tstr2int(x))
-        self.logger.success(f"Add time {t}")
+        self.timelist = sorted(self.timelist, key=lambda x: tstr2int(x["time"]))
+        self.logger.success(f"Add time {time}")
         return True
 
     def change_time(self, source_time: str, target_time: str) -> bool:
@@ -74,7 +74,7 @@ class Timer:
 
         idx = _list.index(target_time)
         self.timelist[idx]["time"] = source_time
-        self.timelist = sorted(self.timelist, key=lambda x: tstr2int(x))
+        self.timelist = sorted(self.timelist, key=lambda x: tstr2int(x["time"]))
         self.logger.success(f"Change time {target_time} to {source_time}")
         return True
 
@@ -88,7 +88,7 @@ class Timer:
         _list = [x["time"] for x in self.timelist]
 
         if time not in _list:
-            self.logger.error(f"Time {t} isn't in current list")
+            self.logger.error(f"Time {time} isn't in current list")
             self.logger.info(f"Current time list:")
             for t in self.timelist:
                 info = t["time"] + ", activate: %b" % t["activate"]
@@ -112,7 +112,7 @@ class Timer:
         _list = [x["time"] for x in self.timelist]
 
         if time not in _list:
-            self.logger.error(f"Time {t} isn't in current list")
+            self.logger.error(f"Time {time} isn't in current list")
             self.logger.info(f"Current time list:")
             for t in self.timelist:
                 info = t["time"] + ", activate: %b" % t["activate"]

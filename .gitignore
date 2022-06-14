@@ -1,1 +1,4 @@
 .vscode/
+
+computer/node_modules/
+computer/package-lock.json

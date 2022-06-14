@@ -34,11 +34,9 @@ class Camera:
         """
         # TODO(Yaoting): AWS service
 
-    def __start_camera(self, queue: Queue) -> None:
+    def __start_camera(self) -> None:
         """
         Start capturing image and detecting
-
-        queue: queue for multi-thread communication
         """
         while True:
             ret, frame = self.camera.read()
@@ -47,10 +45,10 @@ class Camera:
                 break
 
             detect_result = self.__aws_service(frame)
-            logger.log(f"Detection result: {detect_result}")
-            while not queue.empty():
-                queue.get()
-            queue.put(detect_result)
+            logger.info(f"Detection result: {detect_result}")
+            while not self.queue.empty():
+                self.queue.get()
+            self.queue.put(detect_result)
             time.sleep(1.0 / self.fps)
 
         self.camera.release()
@@ -59,5 +57,6 @@ class Camera:
         """
         Start camera
         """
-        camera_thread = Thread(target=self.__start_camera, args=(self.queue))
+        camera_thread = Thread(target=self.__start_camera)
         camera_thread.start()
+        self.logger.success("Camera started")

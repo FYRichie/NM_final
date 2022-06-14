@@ -10,7 +10,7 @@ from typing import Any
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
 
 from logger import Logger
-from ..task import TASK
+from task import TASK
 
 
 class WSClient:
@@ -22,7 +22,7 @@ class WSClient:
         self.url = f"ws://{server_ip}:{server_port}"
         self.ws = websocket.WebSocketApp(url=self.url, on_open=self.__on_open, on_message=self.__on_message, on_error=self.__on_error, on_close=self.__on_close)
         self.logger = logger
-        self.queue = Queue()
+        self.queue = msg_queue
 
     def __msg_check(self, msg: dict) -> bool:
         """
@@ -68,6 +68,7 @@ class WSClient:
     def start(self):
         client_thread = Thread(target=self.__start)
         client_thread.start()
+        self.logger.success("Websocket client started")
 
     def send(self, task: str, success: bool, payload: Any):
         """
