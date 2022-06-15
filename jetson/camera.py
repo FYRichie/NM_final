@@ -54,7 +54,7 @@ class Camera:
             aws_secret_access_key = "msIBrSpGLlNWajpKuDw6xeLg3BsZBGsSQVKsZlHZ"
         )
 
-        frame = cv2.resize(frame, (480, 270))
+        frame = cv2.resize(img, (480, 270))
         img_str = cv2.imencode('.jpg', frame)[1].tobytes()
 
         response = client.detect_faces(
@@ -67,10 +67,13 @@ class Camera:
         FaceDetails = response['FaceDetails']
         if FaceDetails != []:
             if FaceDetails[0]['EyesOpen']['Value'] == False:
+                print('sleeping')
                 return "sleeping"
             else :
+                print('wakeup')
                 return "wakeup"
         else :
+            print('wakeup')
             return "wakeup"
 
     def __start_camera(self) -> None:
