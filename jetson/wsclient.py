@@ -36,6 +36,7 @@ class WSClient:
 
     def __on_open(self, ws):
         self.logger.success(f"Connected to {self.url}")
+        self.send("init", True)
 
     def __on_message(self, ws, msg):
         self.logger.info(f"Message from server: {msg}")
@@ -70,10 +71,10 @@ class WSClient:
         client_thread.start()
         self.logger.success("Websocket client started")
 
-    def send(self, task: str, success: bool, payload: Any):
+    def send(self, task: str, success: bool, payload: Any = ""):
         """
         Send message to server
 
         msg: message to send
         """
-        self.ws.send(json.dumps({"task": task, "success": success, "payload": payload}))
+        self.ws.send(json.dumps({"client": "Jetson", "task": task, "payload": {"success": success, "data": payload}}))
