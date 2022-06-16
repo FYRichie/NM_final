@@ -92,6 +92,12 @@ wss.on("connection", (ws) => {
                         payload: "",
                     });
                     break;
+                case TASK.RESET:
+                    sendToJetson({
+                        task: task,
+                        payload: "",
+                    });
+                    break;
                 case TASK.GET_TIME_LIST:
                     sendToJetson({
                         task: task,

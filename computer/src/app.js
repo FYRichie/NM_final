@@ -6,6 +6,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 
 import SideBar from "./component/sidebar";
 import ClockList from "./component/clocklist";
+import SetList from "./component/setlist";
 import { TASK } from "./constant";
 
 const client = new WebSocket("ws://localhost:4000");
@@ -74,7 +75,7 @@ export default () => {
         setOpen(!open);
     };
     const changeDisplay = (state) => {
-        setDisplay(display);
+        setDisplay(state);
     };
 
     client.onmessage = (mes) => {
@@ -94,45 +95,9 @@ export default () => {
         }
     };
 
-    return (
-        <ThemeProvider theme={mdtheme}>
-            <Box sx={{ display: "flex" }}>
-                <CssBaseline />
-                <NMAppBar position="absolute" open={open}>
-                    <Toolbar sx={{ pr: "24px" }}>
-                        <IconButton
-                            edge="start"
-                            color="inherit"
-                            aria-label="open drawer"
-                            onClick={toggleDrawer}
-                            sx={{
-                                marginRight: "36px",
-                                ...(open && { display: "none" }),
-                            }}>
-                            <MenuIcon />
-                        </IconButton>
-                        <Typography component="h1" variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
-                            xxMaxiexxBed
-                        </Typography>
-                    </Toolbar>
-                </NMAppBar>
-                <NMDrawer variant="permanent" open={open}>
-                    <Toolbar
-                        sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "flex-end",
-                            px: [1],
-                        }}>
-                        <IconButton onClick={toggleDrawer}>
-                            <ChevronLeftIcon />
-                        </IconButton>
-                    </Toolbar>
-                    <Divider />
-                    <List component="nav">
-                        <SideBar changeDisplay={changeDisplay} />
-                    </List>
-                </NMDrawer>
+    const displayer = () => {
+        if (display == "Timer")
+            return (
                 <Box
                     component="main"
                     sx={{
@@ -153,6 +118,72 @@ export default () => {
                         </Grid>
                     </Container>
                 </Box>
+            );
+        else if (display == "Setting")
+            return (
+                <Box
+                    component="main"
+                    sx={{
+                        backgroundColor: (theme) => (theme.palette.mode === "light" ? theme.palette.grey[100] : theme.palette.grey[900]),
+                        flexGrow: 1,
+                        height: "100vh",
+                        overflow: "auto",
+                    }}>
+                    <Toolbar />
+                    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+                        <Grid container spacing={3}>
+                            {/* Clock list */}
+                            <Grid item xs={12}>
+                                <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
+                                    <SetList sendData={sendData} />
+                                </Paper>
+                            </Grid>
+                        </Grid>
+                    </Container>
+                </Box>
+            );
+    };
+
+    return (
+        <ThemeProvider theme={mdtheme}>
+            <Box sx={{ display: "flex" }}>
+                <CssBaseline />
+                <NMAppBar position="absolute" open={open}>
+                    <Toolbar sx={{ pr: "24px" }}>
+                        <IconButton
+                            edge="start"
+                            color="inherit"
+                            aria-label="open drawer"
+                            onClick={toggleDrawer}
+                            sx={{
+                                marginRight: "36px",
+                                ...(open && { display: "none" }),
+                            }}>
+                            <MenuIcon />
+                        </IconButton>
+                        <Typography component="h1" variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
+                            Maxie's Bed
+                        </Typography>
+                    </Toolbar>
+                </NMAppBar>
+                <NMDrawer variant="permanent" open={open}>
+                    <Toolbar
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "flex-end",
+                            px: [1],
+                        }}>
+                        <IconButton onClick={toggleDrawer}>
+                            <ChevronLeftIcon />
+                        </IconButton>
+                    </Toolbar>
+                    <Divider />
+                    <List component="nav">
+                        <SideBar changeDisplay={changeDisplay} />
+                    </List>
+                </NMDrawer>
+                {displayer()}
             </Box>
         </ThemeProvider>
     );

@@ -15,7 +15,7 @@ def get_ip() -> str:
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--server_ip", default="192.168.10.147", help="Ip of the web server(computer)", type=str)
+parser.add_argument("--server_ip", default="localhost", help="Ip of the web server(computer)", type=str)
 parser.add_argument("--server_port", default=4000, help="Port of the web server(computer)", type=int)
 parser.add_argument("--fps", default=10.0, help="Camera capture frame rate", type=float)
 args = vars(parser.parse_args())
@@ -97,6 +97,7 @@ if __name__ == "__main__":
                 payload = ""
                 current_state = INIT
                 call_time = 0
+                logger.info("Reseting...")
                 esp_connecter.send(TOPIC, RESET)
             else:
                 payload = ""

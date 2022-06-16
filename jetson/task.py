@@ -6,4 +6,5 @@ TASK = [
     "delete_time",
     "get_time_list",
     "change_activate",
+    "reset"
 ]

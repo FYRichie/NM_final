@@ -5,4 +5,5 @@ export const TASK = {
     DELETE_TIME: "delete_time",
     GET_TIME_LIST: "get_time_list",
     CHANGE_ACTIVATE: "change_activate",
+    RESET: "reset",
 };
