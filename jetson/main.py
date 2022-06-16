@@ -4,7 +4,7 @@ import socket
 import time
 
 from camera import Camera
-from esp_connecter import ESPConnecter, TOPIC_TYPE
+from esp_connecter import ESPConnecter, TOPIC, RESET, INIT, STATE_1, STATE_2, STATE_3
 from logger import Logger
 from wsclient import WSClient
 from timer import Timer
@@ -13,13 +13,10 @@ from timer import Timer
 def get_ip() -> str:
     return socket.gethostbyname("localhost")
 
+
 parser = argparse.ArgumentParser()
-parser.add_argument("--server_ip", default="127.0.0.1", help="Ip of the web server(computer)", type=str)
+parser.add_argument("--server_ip", default="192.168.10.147", help="Ip of the web server(computer)", type=str)
 parser.add_argument("--server_port", default=4000, help="Port of the web server(computer)", type=int)
-parser.add_argument("--esp_ip", default="192.168.10.123", help="Ip of ESP module", type=str)
-parser.add_argument("--esp_port", default=3000, help="Port of ESP module", type=int)
-parser.add_argument("--jetson_ip", default=get_ip(), help="Ip of Jetson Nano", type=str)
-parser.add_argument("--jetson_port", default=3000, help="Port of Jetson Nano", type=int)
 parser.add_argument("--fps", default=10.0, help="Camera capture frame rate", type=float)
 args = vars(parser.parse_args())
 
@@ -40,14 +37,10 @@ if __name__ == "__main__":
         logger=logger,
         msg_queue=camera_queue,
     )
-    # esp_connecter = ESPConnecter(
-    #     jetson_ip=args["jetson_ip"],
-    #     jetson_port=args["jetson_port"],
-    #     esp_ip=args["esp_ip"],
-    #     esp_port=args["esp_port"],
-    #     logger=logger,
-    #     msg_queue=esp_queue,
-    # )
+    esp_connecter = ESPConnecter(
+        logger=logger,
+        msg_queue=esp_queue,
+    )
     ws_client = WSClient(
         server_ip=args["server_ip"],
         server_port=args["server_port"],
@@ -56,8 +49,10 @@ if __name__ == "__main__":
     )
 
     camera.start()
-    # esp_connecter.listen()
     ws_client.start()
+
+    current_state = INIT
+    call_time = 0
 
     while True:
         if not camera_queue.empty():
@@ -66,8 +61,22 @@ if __name__ == "__main__":
             """
             _, _, _, hour, min = time.strftime("%Y %m %d %H %M").split()
             time_stamp = f"{hour}:{min}".zfill(5)
-            # if time_stamp in timer.get_all() and camera_queue.get() == Camera.SLEEPING:
-            #     esp_connecter.send(TOPIC_TYPE[0], True)
+            if camera_queue.get() == Camera.SLEEPING:
+                clock_list = timer.get_all()
+                time_list = [t["time"] for t in clock_list]
+                if time_stamp in time_list and clock_list[time_list.index(time_stamp)]["activate"] and current_state == INIT:
+                    current_state = STATE_1
+                    esp_connecter.send(TOPIC, current_state)
+                    call_time = time.time()  # seconds
+                elif current_state == STATE_1 and time.time() - call_time >= 60:  # 1 minute
+                    current_state = STATE_2
+                    esp_connecter.send(TOPIC, current_state)
+                    call_time = time.time()
+                elif current_state == STATE_2 and time.time() - call_time >= 60:  # 1 minute
+                    current_state = STATE_3
+                    esp_connecter.send(TOPIC, current_state)
+                    call_time = time.time()
+                # STATE_3 does nothing
 
         if not ws_queue.empty():
             msg = ws_queue.get()
@@ -84,6 +93,11 @@ if __name__ == "__main__":
                 success = timer.change_activate(payload)
             elif task == Timer.GET_TIME_LIST:
                 payload = timer.get_all()
+            elif task == Timer.RESET:
+                payload = ""
+                current_state = INIT
+                call_time = 0
+                esp_connecter.send(TOPIC, RESET)
             else:
                 payload = ""
 

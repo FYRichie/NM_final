@@ -19,6 +19,7 @@ class Timer:
     DELETE_TIME = "delete_time"
     CHANGE_ACTIVATE = "change_activate"
     GET_TIME_LIST = "get_time_list"
+    RESET = "reset"
 
     def __init__(self, logger: Logger) -> None:
         """
