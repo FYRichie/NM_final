@@ -60,8 +60,7 @@ if __name__ == "__main__":
             """
             If time matches and still sleeping, call up
             """
-            _, _, _, hour, min = time.strftime("%Y %m %d %H %M").split()
-            time_stamp = f"{hour}:{min}".zfill(5)
+            time_stamp = time.strftime('%H:%M').zfill(5)
             if camera_queue.get() == Camera.SLEEPING:
                 clock_list = timer.get_all()
                 time_list = [t["time"] for t in clock_list]
