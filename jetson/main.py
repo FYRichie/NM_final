@@ -68,11 +68,11 @@ if __name__ == "__main__":
                     current_state = STATE_1
                     esp_connecter.send(TOPIC, current_state)
                     call_time = time.time()  # seconds
-                elif current_state == STATE_1 and time.time() - call_time >= 60:  # 1 minute
+                elif current_state == STATE_1 and time.time() - call_time >= 30:  # 1 minute
                     current_state = STATE_2
                     esp_connecter.send(TOPIC, current_state)
                     call_time = time.time()
-                elif current_state == STATE_2 and time.time() - call_time >= 60:  # 1 minute
+                elif current_state == STATE_2 and time.time() - call_time >= 30:  # 1 minute
                     current_state = STATE_3
                     esp_connecter.send(TOPIC, current_state)
                     call_time = time.time()

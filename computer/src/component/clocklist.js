@@ -63,6 +63,9 @@ export default (props) => {
         return date;
     };
     const date2str = (date) => {
+        const minutes = date.getMinutes();
+        console.log(minutes);
+        if (minutes < 10) return date.getHours() + ":0" + date.getMinutes();
         return date.getHours() + ":" + date.getMinutes();
     };
 
