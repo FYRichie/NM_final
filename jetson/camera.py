@@ -3,6 +3,7 @@ from queue import Queue
 from threading import Thread
 import cv2
 import time
+import boto3
 import numpy as np
 
 from logger import Logger
@@ -21,7 +22,22 @@ class Camera:
         fps: frame rate for judgement
         size: image size (width, height)
         """
-        self.camera = cv2.VideoCapture(0)
+        pipeline = (
+            "nvarguscamerasrc ! "
+                "video/x-raw(memory:NVMM), "
+                "width=(int)1920, height=(int)1080, "
+                "format=(string)NV12, framerate=(fraction)30/1 ! "
+            "queue ! "
+            "nvvidconv flip-method=2 ! "
+                "video/x-raw, "
+                "width=(int)1920, height=(int)1080, "
+                "format=(string)BGRx, framerate=(fraction)30/1 ! "
+            "videoconvert ! "
+                "video/x-raw, format=(string)BGR ! "
+            "appsink"
+        )
+
+        self.camera = cv2.VideoCapture(pipeline, cv2.CAP_GSTREAMER)
         self.logger = logger
         self.queue = msg_queue
         self.fps = fps
@@ -33,6 +49,32 @@ class Camera:
         img: current image captured by the camera
         """
         # TODO(Yaoting): AWS service
+        client = boto3.client('rekognition',
+            aws_access_key_id = "AKIAXO5ADXIIJGWB3H5T",
+            aws_secret_access_key = "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"
+        )
+
+        frame = cv2.resize(img, (480, 270))
+        img_str = cv2.imencode('.jpg', frame)[1].tobytes()
+
+        response = client.detect_faces(
+            Image = {
+                'Bytes': img_str,
+            },
+            Attributes = ['ALL']
+        )
+        
+        FaceDetails = response['FaceDetails']
+        if FaceDetails != []:
+            if FaceDetails[0]['EyesOpen']['Value'] == False:
+                print('sleeping')
+                return "sleeping"
+            else :
+                print('wakeup')
+                return "wakeup"
+        else :
+            print('wakeup')
+            return "wakeup"
 
     def __start_camera(self) -> None:
         """
