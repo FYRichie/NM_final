@@ -11,7 +11,14 @@ import { TASK } from "../constant";
 export default (props) => {
     const sendData = props["sendData"];
     const list = [
-        { icon: <RestartAltIcon />, operation: "Reset", discription: "Reset the bed to sleepable position.", func: reset },
+        {
+            icon: <RestartAltIcon />,
+            operation: "Reset",
+            discription: "Reset the bed to sleepable position.",
+            func: () => {
+                reset();
+            },
+        },
         {
             icon: <EdgesensorHighIcon />,
             operation: "Vibrate",
