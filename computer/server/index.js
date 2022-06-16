@@ -104,6 +104,12 @@ wss.on("connection", (ws) => {
                         payload: "",
                     });
                     break;
+                case TASK.SEND:
+                    sendToJetson({
+                        task: task,
+                        payload: payload,
+                    });
+                    break;
                 default:
                     break;
             }

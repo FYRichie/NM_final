@@ -6,6 +6,7 @@ const TASK = {
     GET_TIME_LIST: "get_time_list",
     CHANGE_ACTIVATE: "change_activate",
     RESET: "reset",
+    SEND: "send",
 };
 
 module.exports = {

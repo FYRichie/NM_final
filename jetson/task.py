@@ -1,10 +1,10 @@
 # All task that may be done by Jetson which is requested by web server
-TASK = [
-    "init",
-    "add_time",
-    "change_time",
-    "delete_time",
-    "get_time_list",
-    "change_activate",
-    "reset"
-]
+class Task:
+    INIT = "init"
+    ADD_TIME = "add_time"
+    CHANGE_TIME = "change_time"
+    DELETE_TIME = "delete_time"
+    GET_TIME_LIST = "get_time_list"
+    CHANGE_ACTIVATE = "change_activate"
+    RESET = "reset"
+    SEND = "send"

@@ -8,6 +8,7 @@ from esp_connecter import ESPConnecter, TOPIC, RESET, INIT, STATE_1, STATE_2, ST
 from logger import Logger
 from wsclient import WSClient
 from timer import Timer
+from task import Task
 
 
 def get_ip() -> str:
@@ -83,22 +84,23 @@ if __name__ == "__main__":
             task, payload = msg["task"], msg["payload"]
             success = True
 
-            if task == Timer.ADD_TIME:
+            if task == Task.ADD_TIME:
                 success = timer.add_time(payload)
-            elif task == Timer.CHANGE_TIME:
+            elif task == Task.CHANGE_TIME:
                 success = timer.change_time(payload["source_time"], payload["target_time"])
-            elif task == Timer.DELETE_TIME:
+            elif task == Task.DELETE_TIME:
                 success = timer.delete_time(payload)
-            elif task == Timer.CHANGE_ACTIVATE:
+            elif task == Task.CHANGE_ACTIVATE:
                 success = timer.change_activate(payload)
-            elif task == Timer.GET_TIME_LIST:
+            elif task == Task.GET_TIME_LIST:
                 payload = timer.get_all()
-            elif task == Timer.RESET:
+            elif task == Task.RESET:
                 payload = ""
                 current_state = INIT
                 call_time = 0
-                logger.info("Reseting...")
                 esp_connecter.send(TOPIC, RESET)
+            elif task == Task.SEND:
+                esp_connecter.send(TOPIC, payload)
             else:
                 payload = ""
 

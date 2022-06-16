@@ -10,7 +10,7 @@ from typing import Any
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
 
 from logger import Logger
-from task import TASK
+from task import Task
 
 
 class WSClient:
@@ -32,7 +32,7 @@ class WSClient:
         """
         task = msg["task"]
         payload = msg["payload"]
-        return task in TASK
+        return task in [Task.__dict__[key] for key in Task.__dict__.keys() if key[0] != '_']
 
     def __on_open(self, ws):
         self.logger.success(f"Connected to {self.url}")
