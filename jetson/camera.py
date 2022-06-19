@@ -50,8 +50,8 @@ class Camera:
         """
         # TODO(Yaoting): AWS service
         client = boto3.client('rekognition',
-            aws_access_key_id = "AKIAXO5ADXIIJGWB3H5T",
-            aws_secret_access_key = "msIBrSpGLlNWajpKuDw6xeLg3BsZBGsSQVKsZlHZ"
+            aws_access_key_id = "YOUR_ACCESS_KEY_ID",
+            aws_secret_access_key = "YOUR_SECRET_ACCESS_KEY"
         )
 
         frame = cv2.resize(img, (480, 270))
