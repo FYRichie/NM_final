@@ -1,4 +1,4 @@
-# NM_final
+# XxMaxiexX's Bed
 ## Important
 You should start the server first and then run Jetson and Frontend.
 ## How to run Jetson
