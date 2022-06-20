@@ -25,15 +25,15 @@ $ bash run.sh
 ```bash
 cd computer
 ```
-### Setup
+Setup
 ```bash
 $ npm install
 ```
-### Run Frontend
+Run Frontend
 ```bash
 $ npm start
 ```
-### Run Backend
+Run Backend
 ```bash
 $ npm run server
 ```
