@@ -37,6 +37,22 @@ class Camera:
             "appsink"
         )
 
+        pipeline_rtmp = (
+            "appsrc ! "
+                "video/x-raw, format=(string)BGR ! "
+            "queue ! "
+            "videoconvert ! "
+                "video/x-raw, format=RGBA ! "
+            "nvvidconv ! "
+            "nvv4l2h264enc bitrate=8000000 ! "
+            "h264parse ! "
+            "flvmux ! "
+            'rtmpsink location="rtmp://localhost/rtmp/live live=1"'
+        )
+        
+        fourcc = cv2.VideoWriter_fourcc(*"XVID")
+
+        self.rtmp = cv2.VideoWriter(pipeline_rtmp, 0, 30.0, (480, 270))
         self.camera = cv2.VideoCapture(pipeline, cv2.CAP_GSTREAMER)
         self.logger = logger
         self.queue = msg_queue
@@ -91,6 +107,8 @@ class Camera:
             while not self.queue.empty():
                 self.queue.get()
             self.queue.put(detect_result)
+            frame = cv2.resize(frame, (480, 270))
+            self.rtmp.write(frame)
             time.sleep(1.0 / self.fps)
 
         self.camera.release()
