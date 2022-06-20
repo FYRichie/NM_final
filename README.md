@@ -1,27 +1,39 @@
 # NM_final
-
-## How to run
-- Install project dependencies
+## Important
+You should start the server first and then run Jetson and Frontend.
+## How to run Jetson
 ```bash
-# Install protobuf compiler
-$ sudo apt-get install protobuf-compiler
-
-# Install buildtools
-$ sudo apt-get install build-essential make
-
-# Install grpc packages
+cd jetson
+```
+Install packages for Jetson Nano
+```bash
 $ pip3 install -r requirements.txt
 ```
-- Compile protobuf schema to python wrapper
+Setup docker
 ```bash
-$ make
+# Pull image
+$ docker pull eclipse-mosquitto
+# Run docker container
+$ docker run -d -it -p 1883:1883 -v $(pwd)/mosquitto.conf:/mosquitto/config/mosquitto.conf eclipse-mosquitto
 ```
-- Start the gRPC service
+Run main code
 ```bash
-$ python3 server.py --ip 0.0.0.0 --port 8080
+$ bash run.sh
 ```
-- Start the gRPC client
+
+## How to run Frontend and Backend
 ```bash
-# You will get 55 value computed by the grpc service
-$ python3 client.py --ip localhost --port 8080 --order 10
+cd computer
+```
+### Setup
+```bash
+$ npm install
+```
+### Run Frontend
+```bash
+$ npm start
+```
+### Run Backend
+```bash
+$ npm run server
 ```
